@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32802.440
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RayTracing_ConstantMemory", "RayTracing_ConstantMemory\RayTracing_ConstantMemory.vcxproj", "{9EB1FF98-3CD5-47CA-80B0-5D079148E61B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9EB1FF98-3CD5-47CA-80B0-5D079148E61B}.Debug|x64.ActiveCfg = Debug|x64
+		{9EB1FF98-3CD5-47CA-80B0-5D079148E61B}.Debug|x64.Build.0 = Debug|x64
+		{9EB1FF98-3CD5-47CA-80B0-5D079148E61B}.Release|x64.ActiveCfg = Release|x64
+		{9EB1FF98-3CD5-47CA-80B0-5D079148E61B}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {42188590-E668-49C2-8707-93668050FBA5}
+	EndGlobalSection
+EndGlobal

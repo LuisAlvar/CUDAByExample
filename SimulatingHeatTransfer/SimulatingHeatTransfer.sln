@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32802.440
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimulatingHeatTransfer", "SimulatingHeatTransfer\SimulatingHeatTransfer.vcxproj", "{F973B6BE-1F20-4AE7-AF37-085EF6C73009}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F973B6BE-1F20-4AE7-AF37-085EF6C73009}.Debug|x64.ActiveCfg = Debug|x64
+		{F973B6BE-1F20-4AE7-AF37-085EF6C73009}.Debug|x64.Build.0 = Debug|x64
+		{F973B6BE-1F20-4AE7-AF37-085EF6C73009}.Release|x64.ActiveCfg = Release|x64
+		{F973B6BE-1F20-4AE7-AF37-085EF6C73009}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C98ADC9-E81C-4B1C-BDA4-2079A4797920}
+	EndGlobalSection
+EndGlobal
