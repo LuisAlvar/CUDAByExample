@@ -1,3 +1,4 @@
+#include "windows.h" //need to include windows.h before any other GL type file
 #include "cuda.h"
 #include "cuda_gl_interop.h"
 #include "./common/book.h"
@@ -6,7 +7,7 @@
 #include <gl/GL.h>
 
 /*
-nvcc -Llib ./GraphicsInteroperation.cu -o ./bin/GraphicsInteroperation.exe
+nvcc -Llib .\GraphicsInteroperation.cu -o .\bin\GraphicsInteroperation.exe
 */
 
 #define GL_GLEXT_PROTOTYPES
