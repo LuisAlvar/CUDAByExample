@@ -21,4 +21,17 @@ int main(int argc, char** argv)
   prop.minor = 0;
 
   HANDLE_ERROR(cudaChooseDevice(&dev, &prop));
+
+  HANDLE_ERROR(cudaGLSetGLDevice( dev ));
+
+  //these GLUT calls need to be made before the other GL calls
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+  glutInitWindowSize(DIM, DIM);
+  glutCreateWindow("bitmap");
+
+  glGenBuffers(1, &bufferObj);
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER_ARB, bufferObj);
+  glBufferData(GL_PIXEL_UNPACK_BUFFER_ARB, DIM * DIM * 4, NULL, GL_DYNAMIC_DRAW_ARB);
+
 }
