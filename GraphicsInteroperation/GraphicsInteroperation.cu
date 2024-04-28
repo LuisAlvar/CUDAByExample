@@ -3,6 +3,11 @@
 #include "./common/book.h"
 #include "./common/cpu_bitmap.h"
 #include "./common/GL/glut.h"
+#include <gl/GL.h>
+
+/*
+nvcc -Llib ./GraphicsInteroperation.cu -o ./bin/GraphicsInteroperation.exe
+*/
 
 #define GL_GLEXT_PROTOTYPES
 #define DIM 512 
@@ -67,4 +72,44 @@ int main(int argc, char** argv)
   glutDisplayFunc(draw_func);
   glutMainLoop();
 
+}
+
+// based on ripple code, but uses uchar4, which is the type of data graphics interop uses
+__global__ void kernel(uchar4* ptr)
+{
+  // map from threadIdx/BlockIdx to pixel position
+  int x = threadIdx.x + blockIdx.x * blockDim.x;
+  int y = threadIdx.y + blockIdx.y * blockDim.y;
+  int offset = x + (y * blockDim.x * gridDim.x);
+
+  // now calculate the value at that position
+  float fx = x/(float)DIM - 0.5f;
+  float fy = y/(float)DIM - 0.5f;
+  unsigned char green = 128 + 127 * sin(abs(fx*100) - abs(fy*100));
+
+  // accessing uchar4 vs. unsigned char*
+  ptr[offset].x = 0;
+  ptr[offset].y = green;
+  ptr[offset].z = 0;
+  ptr[offset].w = 255;
+
+}
+
+static void draw_func(void)
+{
+  glDrawPixels(DIM, DIM, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+  glutSwapBuffers();
+}
+
+static void key_func(unsigned char key, int x, int y)
+{
+  switch (key)
+  {
+    case 27:
+      // clean up OpenGl and CUDA
+      HANDLE_ERROR(cudaGraphicsUnregisterResource(resource));
+      glBindBuffer(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
+      glDeleteBuffers(1, &bufferObj);
+      exit(0);
+  }
 }
