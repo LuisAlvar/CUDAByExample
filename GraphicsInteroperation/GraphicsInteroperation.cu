@@ -93,7 +93,6 @@ __global__ void kernel(uchar4* ptr)
   ptr[offset].y = green;
   ptr[offset].z = 0;
   ptr[offset].w = 255;
-
 }
 
 static void draw_func(void)
