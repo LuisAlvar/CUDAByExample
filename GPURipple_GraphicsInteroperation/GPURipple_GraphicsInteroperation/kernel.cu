@@ -1,6 +1,8 @@
 #include "windows.h" //need to include windows.h before any other GL type file
-#include "./common/book.h"
-#include "./common/gpu_anim.h"
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
+#include "book.h"
+#include "gpu_anim.h"
 
 /*
 nvcc -Llib .\GPURipple.cu -o .\bin\GPURipple.exe
@@ -13,10 +15,10 @@ void generate_frame(uchar4* pixels, void*, int ticks);
 __global__ void kernel(uchar4* ptr, int ticks);
 
 
-int main( void )
+int main(void)
 {
   GPUAnimBitmap bitmap(DIM, DIM, NULL);
-  bitmap.anim_and_exit( (void (*)(uchar4*,void*,int)) generate_frame, NULL );
+  bitmap.anim_and_exit((void (*)(uchar4*, void*, int)) generate_frame, NULL);
 }
 
 __global__ void kernel(uchar4* ptr, int ticks)
@@ -27,11 +29,11 @@ __global__ void kernel(uchar4* ptr, int ticks)
   int offset = x + (y * blockDim.x * gridDim.x);
 
   // now calculate the value at that position
-  float fx = x - DIM/2;
-  float fy = y - DIM/2;
-  float d = sqrtf(fx*fx + fy*fy);
+  float fx = x - DIM / 2;
+  float fy = y - DIM / 2;
+  float d = sqrtf(fx * fx + fy * fy);
 
-  unsigned char grey = (unsigned char)(128.0f + 127.0f * cos(d/10.0f - ticks/7.0f) / (d/10.0f + 1.0f));
+  unsigned char grey = (unsigned char)(128.0f + 127.0f * cos(d / 10.0f - ticks / 7.0f) / (d / 10.0f + 1.0f));
 
   ptr[offset].x = grey;
   ptr[offset].y = grey;
@@ -40,9 +42,9 @@ __global__ void kernel(uchar4* ptr, int ticks)
 }
 
 void generate_frame(uchar4* pixels, void*, int ticks) {
-  dim3 grids(DIM/16, DIM/16);
+  dim3 grids(DIM / 16, DIM / 16);
   dim3 threads(16, 16);
-  kernel<<<grids, threads>>>(pixels, ticks);
+  kernel << <grids, threads >> > (pixels, ticks);
 }
 
 
