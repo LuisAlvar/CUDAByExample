@@ -3,8 +3,9 @@
 #define SIZE (100*1024*1024)
 
 /*
-g++ -g ./CPUHistogram.cu -o ./bin/CPUHistogram.exe
+nvcc .\CPUHistogram.cu -o .\bin\CPUHistogram.exe
 */
+
 
 int main( void )
 {
