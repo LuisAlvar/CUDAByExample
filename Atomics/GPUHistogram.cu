@@ -2,6 +2,8 @@
 
 #define SIZE (100*1024*1024)
 
+__global__ void histo_kernel(unsigned char* buffer, long size, unsigned int * histo);
+
 int main( void ) {
 
   // Random input stream data
@@ -25,7 +27,11 @@ int main( void ) {
   HANDLE_ERROR(cudaMemset(dev_histo, 0, 256*sizeof(int))); // initialization of GPU buffer
 
   // TODO: Kernel call function 
-
+  cudaDeviceProp prop;
+  HANDLE_ERROR(cudaGetDeviceProperties(&prop, 0));
+  int blocks = prop.multiProcessorCount;
+  printf("Num of MultiProcessors: %d\n", blocks);
+  histo_kernel<<<blocks*2, 256>>>(dev_buffer, SIZE, dev_histo);
 
   unsigned int histo[256];
   HANDLE_ERROR(cudaMemcpy(histo, dev_histo, 256* sizeof(int), cudaMemcpyDeviceToHost)); // data transfer: GPU -> CPU
@@ -41,7 +47,7 @@ int main( void ) {
   long histoCount = 0;
   for (int i = 0; i < 256; i++)
   {
-    histroCount += histo[i];
+    histoCount += histo[i];
   }
   printf("Histogram Sum: %ld\n", histoCount);
   
@@ -68,4 +74,13 @@ int main( void ) {
   return 0;
 }
 
-
+__global__ void histo_kernel(unsigned char* buffer, long size, unsigned int * histo) {
+  int i = threadIdx.x + blockIdx.x * blockDim.x;
+  int stride = blockDim.x * gridDim.x;
+  while (i < size)  
+  {
+    atomicAdd(&(histo[buffer[i]]), 1);
+    i += stride;
+  }
+  
+}
