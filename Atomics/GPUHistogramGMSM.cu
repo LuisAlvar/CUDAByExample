@@ -2,9 +2,9 @@
 
 #define SIZE (100*1024*1024)
 
-
 /*
-nvcc .\GPUHistogram.cu -o .\bin\GPUHistogram.exe
+Showing gloabl memory and shared memory
+nvcc .\GPUHistogramGMSM.cu -o .\bin\GPUHistogramGMSM.exe
 */
 
 __global__ void histo_kernel(unsigned char* buffer, long size, unsigned int * histo);
@@ -80,12 +80,21 @@ int main( void ) {
 }
 
 __global__ void histo_kernel(unsigned char* buffer, long size, unsigned int * histo) {
+  
+  __shared__ unsigned int temp[256];
+  temp[threadIdx.x] = 0;
+
+  __syncthreads();
+
   int i = threadIdx.x + blockIdx.x * blockDim.x;
   int stride = blockDim.x * gridDim.x;
+
   while (i < size)  
   {
-    atomicAdd(&(histo[buffer[i]]), 1);
+    atomicAdd(&(temp[buffer[i]]), 1);
     i += stride;
   }
-  
+  __syncthreads();
+  atomicAdd( &(histo[threadIdx.x]), temp[threadIdx.x] );
+
 }
