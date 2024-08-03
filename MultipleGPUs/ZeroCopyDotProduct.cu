@@ -1,9 +1,51 @@
 #include <stdio.h>
 #include "./common/book.h"
 
+#define imin(a,b) (a<b?a:b)
+const int N = 33 * 1024 * 1024;
+const int threadsPerBlock = 256;
+const int blocksPerGrid = imin(32, (N+threadsPerBlock-1)/threadsPerBlock);
+
 float malloc_test(int size);
 float cuda_host_alloc_test( int size );
 
+__global__ void dot(int size, float *a, float *b, float *c) {
+  __shared__ float cache[threadsPerBlock];
+
+  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+  int cacheIndex = threadIdx.x;
+  float temp = 0;
+  while (tid < size)
+  {
+    temp += a[tid] * b[tid];
+    tid += blockDim.x * gridDim.x;
+
+  }
+  
+  // set the cache valeus
+  cache[cacheIndex] = temp;
+
+  // synchronize threads in this block
+  __syncthreads();
+
+  // for reductions, threadsPerBlock must be power of 2
+  // because of the following code
+  int i = blockDim.x / 2;
+  while (i != 0)
+  {
+    if (cacheIndex < i)
+    {
+      cache[cacheIndex] += cache[cacheIndex + i];
+    }
+    __syncthreads();
+    i /= 2;
+  }
+
+  if (cacheIndex == 0)
+  {
+    c[blockIdx.x] = cache[0];
+  }
+}
 
 int main( void ) {
 
@@ -18,7 +60,18 @@ int main( void ) {
     printf("Device cannot map memory. \n");
     return 0;
   }
+
+  // Runtime setting: indicates that we want the device to be allowed to map host 
+  // memory. 
+  HANDLE_ERROR(cudaSetDeviceFlags(cudaDeviceMapHost));
   
+  // Perform two tests, display the elapsed time, and exit the application
+  float elapsedTime = malloc_test(N);
+  printf("Time using cudaMalloc: %3.1f ms\n", elapsedTime);
+
+  elapsedTime = cuda_host_alloc_test(N);
+  printf("Time using cudaMalloc: %3.1f ms\n", elapsedTime);
+
 }
 
 
@@ -124,7 +177,7 @@ float cuda_host_alloc_test( int size ) {
 
   // Start our timer and launch our kernel 
   HANDLE_ERROR(cudaEventRecord(start, 0));
-  dot<<<blocksPerGrids, threadsPerBlock>>>(size, dev_a, dev_b, dev_partial_c);
+  dot<<<blocksPerGrid, threadsPerBlock>>>(size, dev_a, dev_b, dev_partial_c);
   HANDLE_ERROR(cudaThreadSynchronize());
 
   // After synchronizing, stop our timer and finsh the computation on the CPU as we did before. 
