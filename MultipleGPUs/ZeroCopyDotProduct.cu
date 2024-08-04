@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include "./common/book.h"
 
+// nvcc -Llib ./ZeroCopyDotProduct.cu -o ./bin/ZeroCopyDotProduct.exe
+// First run 
+// Value calculated: 27621697910970467221504.000000
+// Time using cudaMalloc: 25.6 ms
+// Value calculated: 27621697910970467221504.000000
+// Time using cudaMalloc: 22.6 ms
+
 #define imin(a,b) (a<b?a:b)
 const int N = 33 * 1024 * 1024;
 const int threadsPerBlock = 256;
@@ -70,7 +77,7 @@ int main( void ) {
   printf("Time using cudaMalloc: %3.1f ms\n", elapsedTime);
 
   elapsedTime = cuda_host_alloc_test(N);
-  printf("Time using cudaMalloc: %3.1f ms\n", elapsedTime);
+  printf("Time using cudaHostAlloc: %3.1f ms\n", elapsedTime);
 
 }
 
